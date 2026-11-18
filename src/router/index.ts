@@ -41,7 +41,10 @@ router.beforeEach(async (to) => {
   if (!setupRequired && to.name === "setup") return { name: "status" }
   if (to.meta.requiresAuth) {
     try {
-      await get("/api/auth/me")
+      const me = await get<{ authenticated: boolean }>("/api/auth/me")
+      if (!me.authenticated) {
+        return { name: "login", query: { redirect: to.fullPath } }
+      }
     } catch {
       return { name: "login", query: { redirect: to.fullPath } }
     }

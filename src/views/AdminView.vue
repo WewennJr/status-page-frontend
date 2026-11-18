@@ -25,8 +25,14 @@ const tabs = computed(() => [
 
 async function load() {
   try {
-    const me = await get<{ username: string }>("/api/auth/me")
-    username.value = me.username
+    const me = await get<{ authenticated: boolean; username: string | null }>(
+      "/api/auth/me",
+    )
+    if (!me.authenticated) {
+      router.replace({ name: "login", query: { redirect: "/admin" } })
+      return
+    }
+    username.value = me.username ?? ""
   } catch {
     router.replace({ name: "login", query: { redirect: "/admin" } })
   }
