@@ -47,12 +47,12 @@ async function load() {
   }
 }
 
-function startCreate(isAnnouncement: boolean) {
+function startCreate() {
   editingId.value = null
   form.value = {
     title: "",
     description: "",
-    monitor_id: isAnnouncement ? null : (monitors.value[0]?.id ?? null),
+    monitor_id: monitors.value[0]?.id ?? null,
     status: "investigating",
   }
   showForm.value = true
@@ -144,11 +144,8 @@ onMounted(load)
 <template>
   <div>
     <div class="toolbar">
-      <button class="btn" @click="showForm ? closeForm() : startCreate(false)">
+      <button class="btn" @click="showForm ? closeForm() : startCreate()">
         {{ showForm && editingId == null ? store.t("common.cancel") : store.t("admin.incidents.new") }}
-      </button>
-      <button class="btn ghost" @click="showForm ? closeForm() : startCreate(true)">
-        {{ showForm && editingId == null ? store.t("common.cancel") : store.t("admin.incidents.new-announcement") }}
       </button>
     </div>
 
@@ -244,75 +241,16 @@ onMounted(load)
 </template>
 
 <style scoped>
-.toolbar {
-  display: flex;
-  gap: 0.6rem;
-  margin-bottom: 1.2rem;
-}
-
-.empty {
-  padding: 1rem 0;
-}
-
 .incident-form {
   margin-bottom: 1.4rem;
 }
 
-.form-row {
-  display: grid;
+.incident-form .form-row {
   grid-template-columns: 2fr 1fr;
-  gap: 1rem;
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin-bottom: 0.9rem;
 }
 
 .form-field.narrow {
   max-width: 220px;
-}
-
-.form-field label,
-.field-label {
-  font-family: var(--font-mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.form-field input,
-.form-field select,
-.form-field textarea {
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  color: var(--text);
-  padding: 0.5rem 0.7rem;
-  font: inherit;
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.form-field input:focus,
-.form-field select:focus,
-.form-field textarea:focus {
-  border-color: var(--accent);
-}
-
-.form-field select option {
-  background: var(--panel);
-  color: var(--text);
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.6rem;
 }
 
 .incident-row {
@@ -361,17 +299,6 @@ onMounted(load)
   justify-content: flex-end;
 }
 
-.grade-badge {
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  border: 1px solid var(--line-strong);
-  color: var(--accent);
-  padding: 0.18rem 0.5rem;
-  border-radius: 2px;
-}
-
 .update-form {
   margin-top: 1rem;
   border-top: 1px solid var(--line);
@@ -394,7 +321,7 @@ onMounted(load)
   .row-head {
     flex-direction: column;
   }
-  .form-row {
+  .incident-form .form-row {
     grid-template-columns: 1fr;
   }
   .update-form {

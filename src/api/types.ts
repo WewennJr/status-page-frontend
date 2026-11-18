@@ -67,6 +67,9 @@ export interface MonitorAdmin {
   active: boolean
 }
 
+export type MonitorInput = Omit<MonitorAdmin, "id">
+
+
 export interface IncidentAdmin {
   id: number
   monitor_id: number | null
@@ -79,8 +82,33 @@ export interface IncidentAdmin {
   resolved_at: string | null
 }
 
+export interface MonitorStatusAdmin {
+  id: number
+  name: string
+  group_name: string
+  active: boolean
+  status: "up" | "down" | "unknown"
+  response_time_ms: number | null
+  last_check_at: string | null
+  uptime_ratio: number | null
+}
+
 export interface AdminStats {
   monitors: number
+  monitors_up: number
+  monitors_down: number
+  monitors_unknown: number
   checks_stored: number
+  checks_24h: number
+  avg_response_ms_24h: number | null
   open_incidents: number
+  incidents_30d: number
+  uptime_series: UptimeBar[]
+  response_series: HistoryPoint[]
+  monitor_statuses: MonitorStatusAdmin[]
 }
+
+export interface AdminAccount {
+  username: string
+}
+

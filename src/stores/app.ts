@@ -27,7 +27,7 @@ export const useAppStore = defineStore("app", () => {
     applyTheme(theme.value === "dark" ? "light" : "dark")
   }
 
-  /** Applique les settings reçus du backend (thème par défaut, langue, couleur d'accent) */
+  /** Applique les settings reçus du backend (thème, langue, couleurs, favicon, titre) */
   function ingestSettings(values: Record<string, string>) {
     settings.value = values
     if (!localStorage.getItem("sp-lang")) {
@@ -49,8 +49,33 @@ export const useAppStore = defineStore("app", () => {
       theme.value = resolved
       document.documentElement.setAttribute("data-theme", resolved)
     }
-    if (values.accent_color) {
-      document.documentElement.style.setProperty("--accent", values.accent_color)
+
+    const root = document.documentElement
+    const customColors: Array<[string, string]> = [
+      ["accent_color", "--accent-custom"],
+      ["ok_color", "--ok-custom"],
+      ["down_color", "--down-custom"],
+    ]
+    for (const [key, cssVar] of customColors) {
+      const value = values[key]
+      if (value) root.style.setProperty(cssVar, value)
+      else root.style.removeProperty(cssVar)
+    }
+
+    if (values.site_name) document.title = values.site_name
+
+    const icon = values.favicon_url || (/^https?:\/\//.test(values.site_icon ?? "") ? values.site_icon : "")
+    let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
+    if (icon) {
+      if (!link) {
+        link = document.createElement("link")
+        link.rel = "icon"
+        link.dataset.dynamic = "true"
+        document.head.appendChild(link)
+      }
+      link.href = icon
+    } else if (link && link.dataset.dynamic === "true") {
+      link.remove()
     }
   }
 

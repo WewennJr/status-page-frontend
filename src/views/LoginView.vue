@@ -81,55 +81,6 @@ async function submit() {
 </template>
 
 <style scoped>
-.auth-main {
-  position: relative;
-  z-index: 1;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  padding: 1.4rem 1.25rem 3rem;
-}
-
-.auth-header {
-  max-width: 380px;
-  width: 100%;
-  margin: 0 auto 2rem;
-}
-
-.page {
-  width: 100%;
-  max-width: 380px;
-  margin: 0 auto;
-}
-
-.form-button {
-  background: var(--text);
-  color: var(--ink);
-  border: 1px solid var(--text);
-  border-radius: 3px;
-  padding: 0.85rem 1.25rem;
-  font: inherit;
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 0.4rem;
-  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
-}
-
-.form-button:hover:not(:disabled) {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-ink);
-}
-
-.form-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
 .back-hint {
   margin-top: 1.2rem;
   text-align: center;

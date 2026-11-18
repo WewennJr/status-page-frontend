@@ -14,11 +14,32 @@ const loading = ref(true)
 const error = ref(false)
 const showIncidentHistory = ref(false)
 const incidentHistory = ref<IncidentPublic[]>([])
-const fullHistory = ref(false)
 
 const historyDays = computed(() =>
   parseInt(overview.value?.settings["history_days"] ?? "90", 10) || 90,
 )
+const showIncidentsHistory = computed(
+  () => (overview.value?.settings["show_incidents_history"] ?? "true") !== "false",
+)
+const showUptimeByDefault = computed(
+  () => (overview.value?.settings["default_show_uptime"] ?? "true") !== "false",
+)
+const showResponseByDefault = computed(
+  () => (overview.value?.settings["default_show_response_time"] ?? "true") !== "false",
+)
+const siteUrl = computed(() => overview.value?.settings["site_url"] ?? "")
+const siteIcon = computed(() => overview.value?.settings["site_icon"] ?? "")
+const siteName = computed(
+  () => overview.value?.settings["site_name"] ?? store.t("app.title"),
+)
+
+function showUptime(m: MonitorPublic): boolean {
+  return showUptimeByDefault.value && m.show_uptime
+}
+
+function showResponseTime(m: MonitorPublic): boolean {
+  return showResponseByDefault.value && m.show_response_time
+}
 
 interface Grouped {
   name: string
@@ -59,10 +80,6 @@ const chartRange = ref(1) // 1 | 7 | 30 | 90
 const chartPoints = ref<Record<number, HistoryPoint[]>>({})
 const expanded = ref<Set<number>>(new Set())
 
-watch(fullHistory, (v) => {
-  chartRange.value = v ? 30 : 1
-})
-
 function toggleExpanded(id: number) {
   const next = new Set(expanded.value)
   if (next.has(id)) next.delete(id)
@@ -73,7 +90,7 @@ function toggleExpanded(id: number) {
 async function loadCharts() {
   if (!overview.value) return
   for (const m of overview.value.monitors) {
-    if (!m.show_response_time || !expanded.value.has(m.id)) continue
+    if (!showResponseTime(m) || !expanded.value.has(m.id)) continue
     try {
       chartPoints.value[m.id] = await get<HistoryPoint[]>(
         `/api/public/monitor/${m.id}/history?days=${chartRange.value}`,
@@ -145,11 +162,19 @@ function fmtMs(ms: number | null): string {
 <template>
   <div class="container">
     <header class="page-header">
-      <div class="brand">
-        <span v-if="overview?.settings['site_icon'] && !overview.settings['site_icon'].startsWith('http')" class="brand-icon">
-          {{ overview.settings["site_icon"] }}
-        </span>
-        {{ overview?.settings["site_name"] ?? store.t("app.title") }}
+      <a
+        v-if="siteUrl"
+        class="brand brand-link"
+        :href="siteUrl"
+        target="_blank"
+        rel="noopener"
+      >
+        <span v-if="siteIcon && !siteIcon.startsWith('http')" class="brand-icon">{{ siteIcon }}</span>
+        {{ siteName }}
+      </a>
+      <div v-else class="brand">
+        <span v-if="siteIcon && !siteIcon.startsWith('http')" class="brand-icon">{{ siteIcon }}</span>
+        {{ siteName }}
       </div>
       <HeaderControls />
     </header>
@@ -162,7 +187,7 @@ function fmtMs(ms: number | null): string {
         <span>{{ bannerText }}</span>
       </div>
 
-      <h1 class="display">{{ overview?.settings["site_name"] ?? store.t("app.title") }}</h1>
+      <h1 class="display">{{ siteName }}</h1>
       <p v-if="overview?.settings['welcome_text']" class="welcome-text">
         {{ overview.settings["welcome_text"] }}
       </p>
@@ -208,11 +233,11 @@ function fmtMs(ms: number | null): string {
               <p v-if="m.description" class="muted">{{ m.description }}</p>
             </div>
             <div class="monitor-meta">
-              <span v-if="m.show_uptime" class="mono meta-value">
+              <span v-if="showUptime(m)" class="mono meta-value">
                 {{ store.t("monitor.uptime") }} {{ fmtUptime(m.uptime_ratio) }}
               </span>
               <button
-                v-if="m.show_response_time"
+                v-if="showResponseTime(m)"
                 class="icon-btn small"
                 @click="toggleExpanded(m.id)"
               >
@@ -222,14 +247,14 @@ function fmtMs(ms: number | null): string {
             </div>
           </div>
 
-          <div v-if="m.show_uptime" class="monitor-bars">
+          <div v-if="showUptime(m)" class="monitor-bars">
             <UptimeBars :bars="m.bars" :days="historyDays" />
             <div class="mono muted bars-caption">
-              {{ store.t("monitor.90d") }} · {{ historyDays }} j
+              {{ historyDays }} {{ store.t("common.days") }}
             </div>
           </div>
 
-          <div v-if="m.show_response_time && expanded.has(m.id)" class="monitor-chart">
+          <div v-if="showResponseTime(m) && expanded.has(m.id)" class="monitor-chart">
             <div class="chart-controls mono muted">
               <button
                 v-for="d in [1, 7, 30, 90]"
@@ -251,11 +276,13 @@ function fmtMs(ms: number | null): string {
       </section>
 
       <!-- Historique incidents résolus -->
-      <h2 class="section-title">{{ store.t("incidents.history") }}</h2>
-      <button class="icon-btn" @click="showIncidentHistory = !showIncidentHistory">
-        {{ showIncidentHistory ? store.t("incidents.hide-history") : store.t("incidents.show-history") }}
-      </button>
-      <template v-if="showIncidentHistory">
+      <template v-if="showIncidentsHistory">
+        <h2 class="section-title">{{ store.t("incidents.history") }}</h2>
+        <button class="icon-btn" @click="showIncidentHistory = !showIncidentHistory">
+          {{ showIncidentHistory ? store.t("incidents.hide-history") : store.t("incidents.show-history") }}
+        </button>
+      </template>
+      <template v-if="showIncidentsHistory && showIncidentHistory">
         <p v-if="!incidentHistory.length" class="muted">{{ store.t("incidents.none") }}</p>
         <article v-for="incident in incidentHistory" :key="incident.id" class="card incident-card">
           <div class="incident-head">
@@ -288,6 +315,11 @@ function fmtMs(ms: number | null): string {
 </template>
 
 <style scoped>
+.brand-link {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
 .loading {
   font-family: var(--font-mono);
   font-size: 0.75rem;

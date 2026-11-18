@@ -12,11 +12,11 @@
   --dot: rgba(244, 242, 236, 0.05);
   --shadow: rgba(0, 0, 0, 0.5);
 
-  --accent: #ffb454;
+  --accent: var(--accent-custom, #ffb454);
   --accent-ink: #1a1206;
 
-  --ok: #7fd8a4;
-  --down: #ff6a66;
+  --ok: var(--ok-custom, #7fd8a4);
+  --down: var(--down-custom, #ff6a66);
   --warn: #ffb454;
   --unknown: #98948a;
 
@@ -38,11 +38,11 @@
   --dot: rgba(20, 21, 26, 0.05);
   --shadow: rgba(20, 21, 26, 0.12);
 
-  --accent: #c77d1d;
+  --accent: var(--accent-custom, #c77d1d);
   --accent-ink: #fffdf7;
 
-  --ok: #2e8b57;
-  --down: #d84a46;
+  --ok: var(--ok-custom, #2e8b57);
+  --down: var(--down-custom, #d84a46);
   --warn: #c77d1d;
   --unknown: #8a867c;
   color-scheme: light;
@@ -56,6 +56,7 @@ html,
 body {
   margin: 0;
   min-height: 100%;
+  scrollbar-color: var(--line-strong) transparent;
 }
 
 body {
@@ -76,6 +77,16 @@ body::before {
   background-image: radial-gradient(var(--dot) 1px, transparent 1px);
   background-size: 22px 22px;
   z-index: 0;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 a {
@@ -118,6 +129,7 @@ a:hover {
   letter-spacing: 0.28em;
   color: var(--muted);
   text-transform: uppercase;
+  min-width: 0;
 }
 
 .brand::before {
@@ -136,6 +148,29 @@ a:hover {
   display: flex;
   align-items: center;
   gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+/* Layout des pages d'authentification */
+.auth-main {
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 1.4rem 1.25rem 3rem;
+}
+
+.auth-header {
+  max-width: 380px;
+  width: 100%;
+  margin: 0 auto 2rem;
+}
+
+.auth-main .page {
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
 }
 
 /* ============ Typographie ============ */
@@ -267,7 +302,7 @@ h2.section-title {
   background: color-mix(in srgb, var(--down) 7%, transparent);
 }
 
-/* ============ Formulaires (style auth vynkor) ============ */
+/* ============ Formulaires ============ */
 
 .form {
   display: flex;
@@ -303,13 +338,24 @@ h2.section-title {
   font-size: 0.92rem;
   outline: none;
   width: 100%;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .form-field input:focus,
 .form-field select:focus,
 .form-field textarea:focus {
   border-color: var(--accent);
+}
+
+.form-field input:hover:not(:focus),
+.form-field select:hover:not(:focus),
+.form-field textarea:hover:not(:focus) {
+  border-color: var(--line-strong);
+}
+
+.form-field select option {
+  background: var(--panel);
+  color: var(--text);
 }
 
 .form-field textarea {
@@ -320,6 +366,16 @@ h2.section-title {
 .form-field input::placeholder,
 .form-field textarea::placeholder {
   color: color-mix(in srgb, var(--muted) 55%, transparent);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-row.three {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .form-hint {
@@ -343,6 +399,78 @@ h2.section-title {
   color: var(--ok);
   padding: 0.6rem 0.8rem;
   font-size: 0.82rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.toggles {
+  display: flex;
+  gap: 1.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.toggle input {
+  accent-color: var(--accent);
+  width: auto;
+}
+
+.color-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.color-row input[type="color"] {
+  width: 46px;
+  height: 36px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.form-button {
+  background: var(--text);
+  color: var(--ink);
+  border: 1px solid var(--text);
+  border-radius: 3px;
+  padding: 0.85rem 1.25rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.form-button:hover:not(:disabled) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.form-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 /* ============ Boutons ============ */
@@ -411,12 +539,98 @@ h2.section-title {
   letter-spacing: 0.1em;
   padding: 0.35rem 0.6rem;
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .icon-btn:hover {
   color: var(--accent);
   border-color: var(--accent);
+}
+
+.icon-btn.danger:hover {
+  color: var(--down);
+  border-color: var(--down);
+}
+
+/* ============ Badge neutre réutilisable ============ */
+
+.grade-badge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid var(--line-strong);
+  color: var(--accent);
+  padding: 0.2rem 0.55rem;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.grade-badge.subtle {
+  border-color: var(--line);
+  color: var(--muted);
+}
+
+/* ============ Outils de listes ============ */
+
+.toolbar {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.empty {
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}
+
+/* ============ Modale ============ */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: color-mix(in srgb, #000 60%, transparent);
+  backdrop-filter: blur(3px);
+  animation: fade-in 0.18s ease;
+}
+
+.modal-panel {
+  width: 100%;
+  max-width: 440px;
+  max-height: calc(100dvh - 2.5rem);
+  overflow-y: auto;
+  animation: modal-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.modal-head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.35rem;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: none; }
 }
 
 /* ============ Footer ============ */
@@ -430,6 +644,10 @@ h2.section-title {
   margin-top: 3.5rem;
   border-top: 1px solid var(--line);
   padding-top: 1.2rem;
+}
+
+.page-footer a {
+  color: inherit;
 }
 
 /* ============ Divers ============ */
@@ -446,11 +664,33 @@ h2.section-title {
   text-align: right;
 }
 
+@media (max-width: 640px) {
+  .form-row,
+  .form-row.three {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 560px) {
   .container {
     padding-top: 1.5rem;
   }
   h1.display {
     font-size: 1.7rem;
+  }
+  .brand {
+    letter-spacing: 0.18em;
+    font-size: 0.7rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

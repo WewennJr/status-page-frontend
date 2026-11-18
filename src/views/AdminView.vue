@@ -2,7 +2,6 @@
 import { computed, onMounted, ref } from "vue"
 import { RouterLink, useRouter } from "vue-router"
 import { get, post } from "@/api/client"
-import type { AdminStats } from "@/api/types"
 import HeaderControls from "@/components/HeaderControls.vue"
 import DashboardTab from "@/components/admin/DashboardTab.vue"
 import IncidentsTab from "@/components/admin/IncidentsTab.vue"
@@ -15,6 +14,7 @@ const router = useRouter()
 
 const tab = ref<"dashboard" | "sites" | "incidents" | "settings">("dashboard")
 const username = ref("")
+const footerText = ref("")
 
 const tabs = computed(() => [
   { id: "dashboard", label: store.t("admin.nav.dashboard") },
@@ -33,6 +33,8 @@ async function load() {
       return
     }
     username.value = me.username ?? ""
+    const settings = await get<Record<string, string>>("/api/admin/settings")
+    footerText.value = settings.footer_text ?? ""
   } catch {
     router.replace({ name: "login", query: { redirect: "/admin" } })
   }
@@ -56,7 +58,17 @@ onMounted(load)
         <span class="brand-icon">⚙</span>
         {{ store.t("admin.title") }} — {{ username }}
       </div>
-      <HeaderControls />
+      <div class="header-actions">
+        <button
+          class="icon-btn danger"
+          :title="store.t('admin.logout')"
+          :aria-label="store.t('admin.logout')"
+          @click="logout"
+        >
+          ⏻
+        </button>
+        <HeaderControls />
+      </div>
     </header>
 
     <nav class="admin-nav">
@@ -74,11 +86,11 @@ onMounted(load)
     <DashboardTab v-if="tab === 'dashboard'" @goto="(t: 'dashboard' | 'sites' | 'incidents' | 'settings') => (tab = t)" />
     <SitesTab v-else-if="tab === 'sites'" />
     <IncidentsTab v-else-if="tab === 'incidents'" />
-    <SettingsTab v-else />
+    <SettingsTab v-else @account-updated="(name: string) => (username = name)" />
 
-    <footer class="admin-footer">
+    <footer class="page-footer admin-footer">
+      <span>{{ footerText }}</span>
       <RouterLink to="/">{{ store.t("admin.back") }}</RouterLink>
-      <button class="icon-btn danger-text" @click="logout">{{ store.t("admin.logout") }}</button>
     </footer>
   </div>
 </template>
@@ -120,18 +132,7 @@ onMounted(load)
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 3rem;
-  border-top: 1px solid var(--line);
-  padding-top: 1rem;
-  font-size: 0.8rem;
-}
-
-.danger-text {
-  color: var(--down);
-}
-
-.danger-text:hover {
-  border-color: var(--down);
-  color: var(--down);
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 </style>
