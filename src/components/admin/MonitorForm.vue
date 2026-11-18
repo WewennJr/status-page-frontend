@@ -9,6 +9,7 @@ const props = withDefaults(
     saving?: boolean
     error?: string
     compact?: boolean
+    initialGroup?: string
   }>(),
   { monitor: null, saving: false, error: "", compact: false },
 )
@@ -25,7 +26,7 @@ function fromMonitor(m: MonitorAdmin | null): MonitorInput {
     name: m?.name ?? "",
     url: m?.url ?? "https://",
     description: m?.description ?? "",
-    group_name: m?.group_name ?? "Services",
+    group_name: m?.group_name ?? props.initialGroup ?? "Services",
     interval_seconds: m?.interval_seconds ?? 60,
     email: m?.email ?? "",
     show_response_time: m?.show_response_time ?? true,
@@ -38,8 +39,11 @@ function fromMonitor(m: MonitorAdmin | null): MonitorInput {
 const form = reactive<MonitorInput>(fromMonitor(props.monitor))
 
 watch(
-  () => props.monitor,
-  (m) => Object.assign(form, fromMonitor(m)),
+  () => [props.monitor, props.initialGroup],
+  () => {
+    if (props.monitor) Object.assign(form, fromMonitor(props.monitor))
+    else if (props.initialGroup) form.group_name = props.initialGroup
+  },
 )
 
 function submit() {
@@ -60,7 +64,7 @@ function submit() {
       </div>
       <div class="form-field">
         <label>{{ store.t("admin.monitors.group") }}</label>
-        <input v-model="form.group_name" type="text" maxlength="64" />
+        <input v-model="form.group_name" type="text" minlength="1" maxlength="64" required />
       </div>
     </div>
 
@@ -74,14 +78,10 @@ function submit() {
       <textarea v-model="form.description" rows="2" />
     </div>
 
-    <div class="form-row three">
+    <div class="form-row">
       <div class="form-field">
         <label>{{ store.t("admin.monitors.interval") }}</label>
         <input v-model.number="form.interval_seconds" type="number" min="10" max="86400" />
-      </div>
-      <div class="form-field">
-        <label>{{ store.t("admin.monitors.position") }}</label>
-        <input v-model.number="form.position" type="number" />
       </div>
       <div class="form-field">
         <label>{{ store.t("admin.monitors.email") }}</label>
