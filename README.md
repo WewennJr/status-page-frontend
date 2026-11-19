@@ -12,7 +12,7 @@ page and the admin panel (dashboard, sites, incidents, settings).
 ## Requirements
 
 - Node.js `^22.18.0` or `>=24.12.0`
-- The backend running on `http://127.0.0.1:8002` (see the backend repository)
+- The backend running on `http://127.0.0.1:8002` ([see the backend repository](https://github.com/WewennJr/status-page-backend))
 
 ## Quick start
 
@@ -54,22 +54,6 @@ backend, so the app always uses same-origin relative URLs.
 - **UX**: FR/EN switch, light/dark/system theme, accessible modals (Escape,
   backdrop), reduced-motion support.
 
-## Project layout
-
-```
-src/
-  api/              # fetch client + API types
-  assets/base.css   # design system (themes, layout, components)
-  components/       # status badge, uptime bars, response chart, modal,
-                    # header controls, admin tabs/forms
-  i18n/             # minimal FR/EN dictionary
-  router/           # routes and auth guard
-  stores/           # Pinia app store (settings, theme, language)
-  views/            # Status, Setup, Login, Admin
-deploy/             # nginx config template (headers, CSP, API proxy)
-public/             # static assets (favicon)
-```
-
 ## Deployment
 
 ```bash
@@ -77,7 +61,7 @@ npm run build
 # copy dist/ to the webroot, e.g. /var/www/status-page
 ```
 
-Then use `deploy/nginx-status-page.conf` as an nginx site: it serves the SPA,
+Then use a nginx site to serves the SPA,
 proxies `/api/` to `127.0.0.1:8002`, sets long-lived caching for `/assets/`, and
 adds security headers plus a Content-Security-Policy.
 
