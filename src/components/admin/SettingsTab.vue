@@ -80,7 +80,7 @@ async function save() {
   }
 }
 
-/* ===== Compte administrateur ===== */
+/* ===== Admin account ===== */
 const accountOpen = ref(false)
 const accountLoading = ref(false)
 const accountSaving = ref(false)
@@ -187,7 +187,7 @@ onMounted(load)
               :value="form.accent_color || THEME_COLORS.accent_color"
               @input="onColor('accent_color', $event)"
             />
-            <input v-model="form.accent_color" type="text" class="mono" maxlength="7" placeholder="défaut" />
+            <input v-model="form.accent_color" type="text" class="mono" maxlength="7" :placeholder="store.t('common.default')" />
           </div>
         </div>
         <div class="form-field">
@@ -198,7 +198,7 @@ onMounted(load)
               :value="form.ok_color || THEME_COLORS.ok_color"
               @input="onColor('ok_color', $event)"
             />
-            <input v-model="form.ok_color" type="text" class="mono" maxlength="7" placeholder="défaut" />
+            <input v-model="form.ok_color" type="text" class="mono" maxlength="7" :placeholder="store.t('common.default')" />
           </div>
         </div>
         <div class="form-field">
@@ -209,7 +209,7 @@ onMounted(load)
               :value="form.down_color || THEME_COLORS.down_color"
               @input="onColor('down_color', $event)"
             />
-            <input v-model="form.down_color" type="text" class="mono" maxlength="7" placeholder="défaut" />
+            <input v-model="form.down_color" type="text" class="mono" maxlength="7" :placeholder="store.t('common.default')" />
           </div>
         </div>
       </div>

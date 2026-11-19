@@ -1,4 +1,4 @@
-/* Types de l'API */
+/* API types */
 
 export interface UptimeBar {
   date: string

@@ -58,7 +58,7 @@ function closeForms() {
   formError.value = ""
 }
 
-/* ===== Réordonnancement par glisser-déposer ===== */
+/* ===== Drag & drop reordering ===== */
 
 function startDrag(m: MonitorAdmin, event: DragEvent) {
   if (editingId.value === m.id) {
@@ -148,7 +148,7 @@ async function persist(list: MonitorAdmin[]) {
   }
 }
 
-/** Place un site à la fin de son groupe après création/déplacement. */
+/** Place a site at the end of its group after creation/move. */
 async function placeAtEnd(id: number) {
   const ordered = sorted.value
   const item = ordered.find((m) => m.id === id)
@@ -360,6 +360,10 @@ onMounted(load)
   margin-bottom: 0.8rem;
   padding: 1.1rem 1.3rem;
   transition: opacity 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.monitor-row:hover {
+  border-color: var(--line-strong);
 }
 
 .monitor-row[draggable="true"] {

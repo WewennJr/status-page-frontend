@@ -126,6 +126,7 @@ onMounted(load)
 .nav-btn.active {
   color: var(--accent);
   border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 .admin-footer {

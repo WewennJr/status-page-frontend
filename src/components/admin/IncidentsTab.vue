@@ -310,7 +310,6 @@ onMounted(load)
 
 .update-form .form-field {
   flex: 1;
-  margin-bottom: 0;
 }
 
 .update-form .form-field.narrow {

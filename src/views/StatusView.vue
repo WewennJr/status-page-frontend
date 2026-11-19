@@ -75,7 +75,7 @@ const bannerText = computed(() =>
       : store.t("banner.unknown"),
 )
 
-/* historique étendu (graphe) par monitor */
+/* extended history (chart) per monitor */
 const chartRange = ref(1) // 1 | 7 | 30 | 90
 const chartPoints = ref<Record<number, HistoryPoint[]>>({})
 const expanded = ref<Set<number>>(new Set())
@@ -192,7 +192,7 @@ function fmtMs(ms: number | null): string {
         {{ overview.settings["welcome_text"] }}
       </p>
 
-      <!-- Incidents actifs -->
+      <!-- Active incidents -->
       <template v-if="overview?.active_incidents.length">
         <h2 class="section-title">{{ store.t("incidents.active") }}</h2>
         <article
@@ -223,7 +223,7 @@ function fmtMs(ms: number | null): string {
         </article>
       </template>
 
-      <!-- Monitors groupés -->
+      <!-- Grouped monitors -->
       <section v-for="group in groups" :key="group.name">
         <h2 class="section-title">{{ group.name }}</h2>
         <article v-for="m in group.monitors" :key="m.id" class="card monitor-card">
@@ -275,7 +275,7 @@ function fmtMs(ms: number | null): string {
         </article>
       </section>
 
-      <!-- Historique incidents résolus -->
+      <!-- Resolved incident history -->
       <template v-if="showIncidentsHistory">
         <h2 class="section-title">{{ store.t("incidents.history") }}</h2>
         <button class="icon-btn" @click="showIncidentHistory = !showIncidentHistory">
@@ -326,10 +326,6 @@ function fmtMs(ms: number | null): string {
   letter-spacing: 0.15em;
   padding: 4rem 0;
   text-align: center;
-}
-
-.global-banner.up {
-  border-left-color: var(--ok);
 }
 
 .global-banner.unknown {
@@ -451,23 +447,6 @@ function fmtMs(ms: number | null): string {
 .incident-updates p {
   margin: 0.25rem 0 0;
   font-size: 0.9rem;
-}
-
-.grade-badge {
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  border: 1px solid var(--line-strong);
-  color: var(--accent);
-  padding: 0.22rem 0.55rem;
-  border-radius: 2px;
-  white-space: nowrap;
-}
-
-.grade-badge.subtle {
-  color: var(--muted);
-  border-color: var(--line);
 }
 
 .update-time {

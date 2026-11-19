@@ -73,7 +73,7 @@ function title(cell: Cell): string {
 
 .bar {
   flex: 1 1 0;
-  min-width: 2px;
+  min-width: 1px;
   border-radius: 1px;
   transition: transform 0.12s ease;
 }

@@ -1,4 +1,4 @@
-/* i18n minimaliste FR/EN */
+/* Minimal FR/EN i18n */
 
 export type Lang = "fr" | "en"
 
@@ -110,6 +110,7 @@ const messages: Record<Lang, Record<string, string>> = {
     "admin.settings.default-show-rt": "Afficher le temps de réponse par défaut",
     "admin.settings.show-incidents": "Afficher l'historique des incidents",
     "common.days": "jours",
+    "common.default": "défaut",
     "admin.incidents.title": "Titre",
     "admin.incidents.description": "Description",
     "admin.incidents.monitor": "Service concerné",
@@ -264,6 +265,7 @@ const messages: Record<Lang, Record<string, string>> = {
     "admin.settings.default-show-rt": "Show response time by default",
     "admin.settings.show-incidents": "Show incident history",
     "common.days": "days",
+    "common.default": "default",
     "common.cancel": "Cancel",
     "common.close": "Close",
     "common.save": "Save",

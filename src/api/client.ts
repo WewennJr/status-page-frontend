@@ -1,4 +1,4 @@
-/* Client API minimal avec cookies d'authentification */
+/* Minimal API client with authentication cookies */
 
 const BASE = import.meta.env.DEV ? "" : ""
 

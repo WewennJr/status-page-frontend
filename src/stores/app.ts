@@ -27,7 +27,7 @@ export const useAppStore = defineStore("app", () => {
     applyTheme(theme.value === "dark" ? "light" : "dark")
   }
 
-  /** Applique les settings reçus du backend (thème, langue, couleurs, favicon, titre) */
+  /** Apply settings received from the backend (theme, language, colors, favicon, title) */
   function ingestSettings(values: Record<string, string>) {
     settings.value = values
     if (!localStorage.getItem("sp-lang")) {
